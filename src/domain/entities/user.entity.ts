@@ -12,9 +12,8 @@ export class UserEntity {
   ) {}
 
   static fromObject(object: { [key: string]: any }) {
-    const { id, _id, name, email, emailValidated, password, role, img } =
-      object;
-
+    const { id, _id, name, email, emailValidated, password, role, img } = object;
+    
     const entityId = id || _id;
     if (!entityId) {
       throw CustomError.badRequest("missing id");
