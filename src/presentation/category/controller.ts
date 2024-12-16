@@ -1,53 +1,55 @@
-import { CreateCategoryDto, CustomError, PaginationDto } from "../../domain"
-import { Request, request, Response } from 'express';
+import {
+  CreateCategoryDto,
+  UpdateCategoryDto,
+  CustomError,
+  PaginationDto,
+} from "../../domain";
+import { Request, request, Response } from "express";
 import { CategoryService } from "../services/category.service";
 
-
-
 export class CategoryController {
+  constructor(private readonly categoryService: CategoryService) {}
 
-    constructor(
-        private readonly categoryService:CategoryService
-    ){}
-
-    private handleError= (error:unknown, res:Response)=>{
-        if(error instanceof CustomError){
-            return res.status(error.statusCode).json({error:error.message})
-
-        }
-        console.log(`${error}`)
-        return res.status(500).json({error:'Internal server error'})
-
+  private handleError = (error: unknown, res: Response) => {
+    if (error instanceof CustomError) {
+      return res.status(error.statusCode).json({ error: error.message });
     }
+    console.log(`${error}`);
+    return res.status(500).json({ error: "Internal server error" });
+  };
 
-    createCaterory =async (req:Request, res:Response)=>{
-        const [error,createCategoryDto]=  CreateCategoryDto.create(req.body)
-        if(error) return res.status(400).json({error})
+  createCaterory = async (req: Request, res: Response) => {
+    const [error, createCategoryDto] = CreateCategoryDto.create(req.body);
+    if (error) return res.status(400).json({ error });
 
+    this.categoryService
+      .createCategory(createCategoryDto!, req.body.user)
+      .then((category) => res.status(201).json(category))
+      .catch((error) => this.handleError(error, res));
+  };
 
-            this.categoryService.createCategory(createCategoryDto!, req.body.user)
-            .then(category=>res.status(201).json(category))
-            .catch(error=>this.handleError(error, res))
+  getCategory = async (req: Request, res: Response) => {
+    const { page = 1, limit = 10 } = req.query;
 
-    }
+    const [error, paginationDto] = PaginationDto.create(+page, +limit);
+    if (error) return res.status(400).json({ error });
 
-    getCategory =async (req:Request, res:Response)=>{
+    this.categoryService
+      .getCategories(paginationDto!)
+      .then((categories) => res.json(categories))
+      .catch((error) => this.handleError(error, res));
+  };
 
-        const {page=1, limit=10} = req.query
+  getCategoryByName = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const {name} = req.body;
+    const [error] = UpdateCategoryDto.update({
+      name,
+      id,
+    });
 
-        const [error, paginationDto]=PaginationDto.create(+page,+limit)
-        if(error) return res.status(400).json({error})
-
-        
-        this.categoryService.getCategories(paginationDto!)
-        .then((categories)=>res.json(categories))
-        .catch(error=>this.handleError(error,res))
-    }
-
-
-
-
-
-
+    if (error) res.status(400).json({ error });
+    this.categoryService.getCategoryByName(name )
+    .then((categories) => res.json(categories))
+  };
 }
-

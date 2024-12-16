@@ -3,6 +3,7 @@ import {
   CreateCategoryDto,
   CustomError,
   PaginationDto,
+  UpdateCategoryDto,
   UserEntity,
 } from "../../domain";
 
@@ -65,5 +66,36 @@ export class CategoryService {
     } catch (error) {
       throw CustomError.internalServer(`${error}`);
     }
+  }
+
+  async getCategoryByName(id:string){
+
+
+
+    console.log('sss',id)
+
+    try {
+      const [total, categories] = await Promise.all([
+        CategoryModel.countDocuments(),
+        CategoryModel.find({name:id})
+
+      ]);
+
+      return {
+
+        categories: categories.map((category) => ({
+          id: category.id,
+          name: category.name,
+          available: category.available,
+          // user:category.user
+        })),
+      };
+    } catch (error) {
+      throw CustomError.internalServer(`${error}`);
+    }
+
+    
+
+
   }
 }
