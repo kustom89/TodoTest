@@ -22,7 +22,6 @@ export class MongoDataBase{
             return true
             
         } catch (error) {
-            console.log(`Mongo connection error`)
             throw error;
         }
     }
