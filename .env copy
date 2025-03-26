@@ -1,0 +1,17 @@
+
+
+PORT=3000
+
+MONGO_URL=mongodb://mongo-user:123456@localhost:27017/
+MONGO_DB_NAME=mystore
+
+
+JWT_SEED=fafefoooo¿gbf
+
+SEND_EMAIL=false
+
+MAILER_EMAIL=ebetancourtalegria@gmail.com
+MAILER_SERVICE=gmail
+MAILER_SECRET_KEY=wguhnqwfxvftjoxa
+
+WEBSERVICE_URL=http://localhost:3000/api
